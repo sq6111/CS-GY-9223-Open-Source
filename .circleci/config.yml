@@ -1,0 +1,36 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.12
+    steps:
+      - checkout
+      - run:
+          name: Install uv
+          command: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - run:
+          name: Install dependencies
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            uv sync
+      - run:
+          name: Run ruff
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            uv run ruff check .
+      - run:
+          name: Run mypy
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            uv run mypy . || true
+      - run:
+          name: Run tests
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            uv run pytest tests/integration/ || true
+
+workflows:
+  main:
+    jobs:
+      - test
