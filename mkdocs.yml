@@ -1,0 +1,14 @@
+site_name: OSPSD Team 9 - Chat Client
+site_description: HW1 Chat Client with Slack Implementation
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Components:
+      - Chat Client API: components/chat_client_api.md
+      - Slack Implementation: components/slack_client_impl.md
+  - Contributing: contributing.md
+  - Design: design.md
