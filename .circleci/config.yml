@@ -23,12 +23,19 @@ jobs:
           name: Run mypy
           command: |
             export PATH="$HOME/.local/bin:$PATH"
-            uv run mypy . || true
+            uv run mypy .
       - run:
-          name: Run tests
+          name: Run tests with coverage
           command: |
             export PATH="$HOME/.local/bin:$PATH"
-            uv run pytest tests/integration/ || true
+            uv run pytest tests/ --junitxml=test-results/junit.xml --cov=components --cov-report=html --cov-report=xml
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: htmlcov
+          destination: coverage-report
+      - store_artifacts:
+          path: coverage.xml
 
 workflows:
   main:

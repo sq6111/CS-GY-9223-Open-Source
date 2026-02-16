@@ -75,8 +75,6 @@ def register_client(factory) -> None:
     """
     Register a chat client implementation factory.
     
-    Args:
-        factory: Callable that returns a ChatClient instance
     """
     global _client_factory
     _client_factory = factory
