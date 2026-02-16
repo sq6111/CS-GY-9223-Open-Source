@@ -2,7 +2,6 @@
 from typing import Any
 
 import pytest
-
 from chat_client_api.client import ChatClient, get_client, register_client
 
 
