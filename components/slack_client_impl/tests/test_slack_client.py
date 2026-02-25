@@ -1,4 +1,5 @@
 """Unit tests for Slack client implementation."""
+
 import os
 from unittest import mock
 

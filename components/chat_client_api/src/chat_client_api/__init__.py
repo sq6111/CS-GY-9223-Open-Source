@@ -1,4 +1,5 @@
 """Chat client API package."""
+
 from chat_client_api.client import (
     ChatClient as ChatClient,
 )

@@ -1,4 +1,5 @@
 """Integration tests for dependency injection."""
+
 import os
 import sys
 from unittest import mock
@@ -16,6 +17,7 @@ def test_slack_client_registration() -> None:
 
     # Reset factory
     from chat_client_api import client as client_module
+
     client_module._client_factory = None
 
     # Mock the environment variable

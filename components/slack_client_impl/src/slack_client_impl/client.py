@@ -1,4 +1,5 @@
 """Slack implementation of ChatClient."""
+
 import os
 
 from chat_client_api.client import (
@@ -18,6 +19,7 @@ class SlackClient(ChatClient):
 
         Args:
             token: Slack bot token
+
         """
         self.token = token
 

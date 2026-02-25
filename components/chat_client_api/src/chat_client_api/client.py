@@ -1,4 +1,5 @@
 """Abstract interface for chat clients."""
+
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -47,6 +48,7 @@ class ChatClient(ABC):
 
         Returns:
             SendMessageResponse with message details
+
         """
 
     @abstractmethod
@@ -55,6 +57,7 @@ class ChatClient(ABC):
 
         Returns:
             List of Channel objects
+
         """
 
     @abstractmethod
@@ -71,6 +74,7 @@ class ChatClient(ABC):
 
         Returns:
             List of Message objects
+
         """
 
 
@@ -85,6 +89,7 @@ class _ClientRegistry:
 
         Args:
             factory: Callable that returns a ChatClient instance
+
         """
         cls._factory = factory
 
@@ -94,6 +99,7 @@ class _ClientRegistry:
 
         Returns:
             The registered factory or None
+
         """
         return cls._factory
 
@@ -106,6 +112,7 @@ def get_client() -> ChatClient:
 
     Raises:
         RuntimeError: If no implementation is registered
+
     """
     factory = _ClientRegistry.get()
     if factory is None:
@@ -122,5 +129,6 @@ def register_client(factory: Callable[[], ChatClient]) -> None:
 
     Args:
         factory: Callable that returns a ChatClient instance
+
     """
     _ClientRegistry.set(factory)

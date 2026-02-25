@@ -1,4 +1,5 @@
 """End-to-end tests for Slack client."""
+
 import os
 
 import pytest

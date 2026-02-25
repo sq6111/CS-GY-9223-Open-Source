@@ -1,6 +1,6 @@
 """Unit tests for chat client API."""
-import pytest
 
+import pytest
 from chat_client_api.client import (
     Channel,
     ChatClient,
@@ -21,6 +21,7 @@ class MockClient(ChatClient):
     """Mock client for testing."""
 
     def send_message(self, channel: str, text: str) -> SendMessageResponse:
+        """Send a mock message."""
         return SendMessageResponse(
             message_id="123",
             channel=channel,
@@ -29,8 +30,9 @@ class MockClient(ChatClient):
         )
 
     def list_channels(self) -> list[Channel]:
+        """List mock channels."""
         return [
-            Channel(channel_id="C123", name="general", is_private=False)
+            Channel(channel_id="C123", name="general", is_private=False),
         ]
 
     def get_messages(
@@ -38,6 +40,7 @@ class MockClient(ChatClient):
         channel: str,
         limit: int = 10,
     ) -> list[Message]:
+        """Get mock messages."""
         return [
             Message(
                 message_id="1",
@@ -45,7 +48,7 @@ class MockClient(ChatClient):
                 text="Hello",
                 sender="U123",
                 timestamp="12345.678",
-            )
+            ),
         ]
 
 
@@ -57,7 +60,9 @@ def test_get_client_raises_when_no_implementation_registered() -> None:
 
 def test_register_client_stores_factory() -> None:
     """Test that register_client stores the factory function."""
+
     def mock_factory() -> ChatClient:
+        """Create a mock client."""
         return MockClient()
 
     register_client(mock_factory)
