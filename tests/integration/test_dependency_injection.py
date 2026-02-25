@@ -4,7 +4,7 @@ import os
 import sys
 from unittest import mock
 
-from chat_client_api.client import ChatClient, get_client
+from chat_client_api.client import ChatClient, _ClientRegistry, get_client
 
 
 def test_slack_client_registration() -> None:
@@ -16,9 +16,7 @@ def test_slack_client_registration() -> None:
         del sys.modules["slack_client_impl.client"]
 
     # Reset factory
-    from chat_client_api import client as client_module
-
-    client_module._client_factory = None
+    _ClientRegistry._factory = None
 
     # Mock the environment variable
     with mock.patch.dict(os.environ, {"SLACK_BOT_TOKEN": "test-token"}):
