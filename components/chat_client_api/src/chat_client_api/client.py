@@ -1,14 +1,44 @@
 """Abstract interface for chat clients."""
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Any
+from dataclasses import dataclass
+
+
+@dataclass
+class Message:
+    """Represents a chat message."""
+
+    message_id: str
+    channel: str
+    text: str
+    sender: str
+    timestamp: str
+
+
+@dataclass
+class Channel:
+    """Represents a chat channel."""
+
+    channel_id: str
+    name: str
+    is_private: bool
+
+
+@dataclass
+class SendMessageResponse:
+    """Response from sending a message."""
+
+    message_id: str
+    channel: str
+    timestamp: str
+    ok: bool
 
 
 class ChatClient(ABC):
     """Abstract base class for chat client implementations."""
 
     @abstractmethod
-    def send_message(self, channel: str, text: str) -> dict[str, Any]:
+    def send_message(self, channel: str, text: str) -> SendMessageResponse:
         """Send a message to a channel.
 
         Args:
@@ -16,17 +46,15 @@ class ChatClient(ABC):
             text: Message text to send
 
         Returns:
-            Response from the chat service
-
+            SendMessageResponse with message details
         """
 
     @abstractmethod
-    def list_channels(self) -> list[dict[str, Any]]:
+    def list_channels(self) -> list[Channel]:
         """List all available channels.
 
         Returns:
-            List of channel information dictionaries
-
+            List of Channel objects
         """
 
     @abstractmethod
@@ -34,7 +62,7 @@ class ChatClient(ABC):
         self,
         channel: str,
         limit: int = 10,
-    ) -> list[dict[str, Any]]:
+    ) -> list[Message]:
         """Get recent messages from a channel.
 
         Args:
@@ -42,13 +70,32 @@ class ChatClient(ABC):
             limit: Maximum number of messages to retrieve
 
         Returns:
-            List of message dictionaries
-
+            List of Message objects
         """
 
 
-# Dependency injection factory
-_client_factory: Callable[[], ChatClient] | None = None
+class _ClientRegistry:
+    """Holds the registered client factory — avoids global mutation."""
+
+    _factory: Callable[[], ChatClient] | None = None
+
+    @classmethod
+    def set(cls, factory: Callable[[], ChatClient]) -> None:
+        """Register a factory.
+
+        Args:
+            factory: Callable that returns a ChatClient instance
+        """
+        cls._factory = factory
+
+    @classmethod
+    def get(cls) -> Callable[[], ChatClient] | None:
+        """Get the registered factory.
+
+        Returns:
+            The registered factory or None
+        """
+        return cls._factory
 
 
 def get_client() -> ChatClient:
@@ -59,15 +106,15 @@ def get_client() -> ChatClient:
 
     Raises:
         RuntimeError: If no implementation is registered
-
     """
-    if _client_factory is None:
+    factory = _ClientRegistry.get()
+    if factory is None:
         msg = (
             "No chat client implementation registered. "
             "Import an implementation package to register it."
         )
         raise RuntimeError(msg)
-    return _client_factory()
+    return factory()
 
 
 def register_client(factory: Callable[[], ChatClient]) -> None:
@@ -75,7 +122,5 @@ def register_client(factory: Callable[[], ChatClient]) -> None:
 
     Args:
         factory: Callable that returns a ChatClient instance
-
     """
-    global _client_factory  # noqa: PLW0603
-    _client_factory = factory
+    _ClientRegistry.set(factory)

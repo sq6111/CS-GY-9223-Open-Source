@@ -1,8 +1,13 @@
 """Slack implementation of ChatClient."""
 import os
-from typing import Any
 
-from chat_client_api.client import ChatClient, register_client
+from chat_client_api.client import (
+    Channel,
+    ChatClient,
+    Message,
+    SendMessageResponse,
+    register_client,
+)
 
 
 class SlackClient(ChatClient):
@@ -13,22 +18,16 @@ class SlackClient(ChatClient):
 
         Args:
             token: Slack bot token
-
         """
         self.token = token
-        # TODO: Initialize Slack WebClient from slack_sdk
-        # from slack_sdk import WebClient
-        # self.client = WebClient(token=token)
 
-    def send_message(self, channel: str, text: str) -> dict[str, Any]:
+    def send_message(self, channel: str, text: str) -> SendMessageResponse:
         """Send a message to a Slack channel."""
-        # TODO: Implement using Slack SDK
         msg = "Coming in next iteration"
         raise NotImplementedError(msg)
 
-    def list_channels(self) -> list[dict[str, Any]]:
+    def list_channels(self) -> list[Channel]:
         """List all Slack channels."""
-        # TODO: Implement using Slack SDK
         msg = "Coming in next iteration"
         raise NotImplementedError(msg)
 
@@ -36,9 +35,8 @@ class SlackClient(ChatClient):
         self,
         channel: str,
         limit: int = 10,
-    ) -> list[dict[str, Any]]:
+    ) -> list[Message]:
         """Get recent messages from a Slack channel."""
-        # TODO: Implement using Slack SDK
         msg = "Coming in next iteration"
         raise NotImplementedError(msg)
 
