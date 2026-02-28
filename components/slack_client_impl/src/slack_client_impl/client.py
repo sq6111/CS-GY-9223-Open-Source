@@ -37,8 +37,16 @@ class SlackClient(ChatClient):
         self,
         channel: str,
         limit: int = 10,
+        cursor: str | None = None,
     ) -> list[Message]:
-        """Get recent messages from a Slack channel."""
+        """Get recent messages from a Slack channel.
+
+        Args:
+            channel: Channel ID or name
+            limit: Maximum number of messages to retrieve
+            cursor: Pagination cursor for fetching next set of messages
+
+        """
         msg = "Coming in next iteration"
         raise NotImplementedError(msg)
 

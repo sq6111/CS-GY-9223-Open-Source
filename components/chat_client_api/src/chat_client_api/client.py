@@ -65,12 +65,14 @@ class ChatClient(ABC):
         self,
         channel: str,
         limit: int = 10,
+        cursor: str | None = None,
     ) -> list[Message]:
         """Get recent messages from a channel.
 
         Args:
             channel: Channel ID or name
             limit: Maximum number of messages to retrieve
+            cursor: Pagination cursor for fetching next set of messages
 
         Returns:
             List of Message objects

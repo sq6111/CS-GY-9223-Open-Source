@@ -39,6 +39,7 @@ class MockClient(ChatClient):
         self,
         channel: str,
         limit: int = 10,
+        cursor: str | None = None,
     ) -> list[Message]:
         """Get mock messages."""
         return [
