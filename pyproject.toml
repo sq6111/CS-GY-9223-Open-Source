@@ -1,0 +1,67 @@
+[project]
+name = "ospsd-team9-hw1"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "mypy>=1.8.0",
+    "ruff>=0.1.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "components/chat_client_api",
+    "components/slack_client_impl",
+]
+
+[tool.uv.sources]
+chat-client-api = { workspace = true }
+slack-client-impl = { workspace = true }
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203",  # Conflicts with D211
+    "D213",  # Conflicts with D212
+    # Test file exceptions
+    "S101",  # Use of assert (needed for pytest)
+    "S105",  # Possible hardcoded password (test tokens are not real secrets)
+    "INP001",  # Implicit namespace package (tests don't need __init__.py)
+    "ANN201",  # Missing return type annotation (acceptable for test functions)
+    "ARG002",  # Unused method arguments (interface methods in tests)
+    "SLF001",  # Private member access (testing internal state)
+    "SIM117",  # Nested with statements (acceptable for test clarity)
+    # Minor formatting exceptions
+    "ERA001",  # Commented code (useful for TODOs in first draft)
+    "FIX002",  # TODO comments (acceptable for first draft)
+    "TD002",  # TODO missing author
+    "TD003",  # TODO missing issue link
+    "PLC0415",  # Import not at top (needed for DI tests)
+]
+
+[tool.mypy]
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+    "components/chat_client_api/tests",
+    "components/slack_client_impl/tests",
+]
+python_files = "test_*.py"
+
+[tool.coverage.run]
+branch = true
+source = ["components"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
