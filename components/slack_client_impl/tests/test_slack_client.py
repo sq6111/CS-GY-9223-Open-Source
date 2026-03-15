@@ -1,5 +1,6 @@
 """Unit tests for Slack client implementation."""
 import os
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -16,7 +17,7 @@ def test_slack_client_initialization() -> None:
 def test_send_message_success() -> None:
     """Test send_message returns SendMessageResponse on success."""
     client = SlackClient("test-token")
-    mock_response = {
+    mock_response: dict[str, Any] = {
         "ok": True,
         "ts": "12345.678",
         "channel": "general",
@@ -39,7 +40,7 @@ def test_send_message_failure() -> None:
     with mock.patch.object(
         client.client,
         "chat_postMessage",
-        side_effect=SlackApiError("error", {}),
+        side_effect=SlackApiError("error", {}),  # type: ignore[no-untyped-call]
     ):
         result = client.send_message("general", "Hello")
         assert result.ok is False
@@ -48,7 +49,7 @@ def test_send_message_failure() -> None:
 def test_list_channels_success() -> None:
     """Test list_channels returns list of channels."""
     client = SlackClient("test-token")
-    mock_response = {
+    mock_response: dict[str, Any] = {
         "channels": [
             {
                 "id": "C001",
@@ -75,7 +76,7 @@ def test_list_channels_failure() -> None:
     with mock.patch.object(
         client.client,
         "conversations_list",
-        side_effect=SlackApiError("error", {}),
+        side_effect=SlackApiError("error", {}),  # type: ignore[no-untyped-call]
     ):
         channels = client.list_channels()
         assert channels == []
@@ -84,7 +85,7 @@ def test_list_channels_failure() -> None:
 def test_get_messages_success() -> None:
     """Test get_messages returns list of messages."""
     client = SlackClient("test-token")
-    mock_response = {
+    mock_response: dict[str, Any] = {
         "messages": [
             {
                 "ts": "12345.678",
@@ -107,7 +108,7 @@ def test_get_messages_success() -> None:
 def test_get_messages_with_cursor() -> None:
     """Test get_messages with pagination cursor."""
     client = SlackClient("test-token")
-    mock_response = {
+    mock_response: dict[str, Any] = {
         "messages": [],
     }
     with mock.patch.object(
@@ -126,7 +127,7 @@ def test_get_messages_failure() -> None:
     with mock.patch.object(
         client.client,
         "conversations_history",
-        side_effect=SlackApiError("error", {}),
+        side_effect=SlackApiError("error", {}),  # type: ignore[no-untyped-call]
     ):
         messages = client.get_messages("general")
         assert messages == []
@@ -153,5 +154,6 @@ def test_create_slack_client_without_token() -> None:
 def test_slack_client_inherits_from_chat_client() -> None:
     """Test that SlackClient properly inherits from ChatClient."""
     from chat_client_api.client import ChatClient
+
     client = SlackClient("test-token")
     assert isinstance(client, ChatClient)
