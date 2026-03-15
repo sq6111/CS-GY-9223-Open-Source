@@ -1,7 +1,6 @@
 """Slack implementation of ChatClient."""
 import os
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
+
 from chat_client_api.client import (
     Channel,
     ChatClient,
@@ -9,6 +8,8 @@ from chat_client_api.client import (
     SendMessageResponse,
     register_client,
 )
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 
 class SlackClient(ChatClient):
@@ -16,26 +17,28 @@ class SlackClient(ChatClient):
 
     def __init__(self, token: str) -> None:
         """Initialize Slack client.
-        
+
         Args:
             token: Slack bot token
+
         """
         self.token = token
         self.client = WebClient(token=token)
 
     def send_message(
-        self, 
-        channel: str, 
-        text: str
+        self,
+        channel: str,
+        text: str,
     ) -> SendMessageResponse:
         """Send a message to a Slack channel.
-        
+
         Args:
             channel: Channel ID or name
             text: Message text to send
-            
+
         Returns:
             SendMessageResponse with message details
+
         """
         try:
             response = self.client.chat_postMessage(
@@ -48,7 +51,7 @@ class SlackClient(ChatClient):
                 timestamp=str(response["ts"]),
                 ok=bool(response["ok"]),
             )
-        except SlackApiError as e:
+        except SlackApiError:
             return SendMessageResponse(
                 message_id="",
                 channel=channel,
@@ -58,22 +61,21 @@ class SlackClient(ChatClient):
 
     def list_channels(self) -> list[Channel]:
         """List all Slack channels.
-        
+
         Returns:
             List of Channel objects
+
         """
         try:
             response = self.client.conversations_list()
-            channels = []
-            for ch in response["channels"]:
-                channels.append(
-                    Channel(
-                        channel_id=str(ch["id"]),
-                        name=str(ch["name"]),
-                        is_private=bool(ch["is_private"]),
-                    )
+            return [
+                Channel(
+                    channel_id=str(ch["id"]),
+                    name=str(ch["name"]),
+                    is_private=bool(ch["is_private"]),
                 )
-            return channels
+                for ch in response["channels"]
+            ]
         except SlackApiError:
             return []
 
@@ -84,14 +86,15 @@ class SlackClient(ChatClient):
         cursor: str | None = None,
     ) -> list[Message]:
         """Get recent messages from a Slack channel.
-        
+
         Args:
             channel: Channel ID or name
             limit: Maximum number of messages
             cursor: Pagination cursor
-            
+
         Returns:
             List of Message objects
+
         """
         try:
             kwargs: dict[str, str | int] = {
@@ -100,34 +103,32 @@ class SlackClient(ChatClient):
             }
             if cursor:
                 kwargs["cursor"] = cursor
-                
             response = self.client.conversations_history(
-                **kwargs  # type: ignore[arg-type]
+                **kwargs,  # type: ignore[arg-type]
             )
-            messages = []
-            for msg in response["messages"]:
-                messages.append(
-                    Message(
-                        message_id=str(msg.get("ts", "")),
-                        channel=channel,
-                        text=str(msg.get("text", "")),
-                        sender=str(msg.get("user", "unknown")),
-                        timestamp=str(msg.get("ts", "")),
-                    )
+            return [
+                Message(
+                    message_id=str(msg.get("ts", "")),
+                    channel=channel,
+                    text=str(msg.get("text", "")),
+                    sender=str(msg.get("user", "unknown")),
+                    timestamp=str(msg.get("ts", "")),
                 )
-            return messages
+                for msg in response["messages"]
+            ]
         except SlackApiError:
             return []
 
 
 def _create_slack_client() -> SlackClient:
     """Create Slack client from environment variables.
-    
+
     Returns:
         SlackClient instance
-        
+
     Raises:
         ValueError: If token not set
+
     """
     token = os.getenv("SLACK_BOT_TOKEN")
     if not token:
