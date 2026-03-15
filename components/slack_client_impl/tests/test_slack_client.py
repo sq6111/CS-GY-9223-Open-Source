@@ -3,7 +3,6 @@ import os
 from unittest import mock
 
 import pytest
-
 from slack_client_impl.client import SlackClient, _create_slack_client
 
 
